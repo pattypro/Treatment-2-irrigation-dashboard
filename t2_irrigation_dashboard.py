@@ -1,6 +1,8 @@
 
 import streamlit as st
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # --- Dashboard Title ---
 st.title("T2 Smart Irrigation Scheduler Dashboard")
@@ -41,6 +43,21 @@ if uploaded_file is not None:
     # Show Results
     st.success("Irrigation schedule generated successfully!")
     st.dataframe(df[['timestamp', 'soil_moisture', 'ET0', 'forecast_rain', 'irrigate', 'ETc', 'irrigation_mm']])
+
+    # --- Visualization ---
+    st.subheader("📊 Data Visualization")
+
+    fig, ax = plt.subplots(figsize=(12, 6))
+    sns.lineplot(data=df, x='timestamp', y='soil_moisture', label='Soil Moisture', marker='o', ax=ax)
+    sns.lineplot(data=df, x='timestamp', y='ET0', label='ET0', marker='s', ax=ax)
+    sns.lineplot(data=df, x='timestamp', y='forecast_rain', label='Rain Forecast', marker='^', ax=ax)
+    sns.lineplot(data=df, x='timestamp', y='irrigation_mm', label='Irrigation (mm)', marker='D', ax=ax)
+    ax.set_title("Soil Moisture, ET0, Rain Forecast, and Irrigation Over Time")
+    ax.set_ylabel("Values")
+    ax.set_xlabel("Date")
+    ax.legend()
+    ax.grid(True)
+    st.pyplot(fig)
 
     # Download option
     csv = df.to_csv(index=False).encode('utf-8')
